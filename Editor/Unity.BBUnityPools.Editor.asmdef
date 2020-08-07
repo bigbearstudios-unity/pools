@@ -1,0 +1,17 @@
+{
+    "name": "Unity.BBUnityPools.Editor",
+    "references": [
+        "GUID:7bec21bbefdf0a9408b87279f80235ed"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
