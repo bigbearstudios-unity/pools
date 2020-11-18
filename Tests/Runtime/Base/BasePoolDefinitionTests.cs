@@ -92,7 +92,7 @@ public class BasePoolDefinitionTests {
             PoolBehaviour newInstance = pool.Spawn(new Vector3(1.0f, 1.0f, 1.0f));
 
             Assert.NotNull(newInstance);
-            BBAssert.AreEqual(new Vector3(1.0f, 1.0f, 1.0f), newInstance.Position);
+            UnityAssert.AreEqual(new Vector3(1.0f, 1.0f, 1.0f), newInstance.Position);
         });
     }
 
@@ -104,7 +104,7 @@ public class BasePoolDefinitionTests {
             PoolBehaviour newInstance = pool.Spawn(Vector3.zero, Quaternion.identity);
 
             Assert.NotNull(newInstance);
-            BBAssert.AreEqual(Quaternion.identity, newInstance.Rotation);
+            UnityAssert.AreEqual(Quaternion.identity, newInstance.Rotation);
         });
     }
 
@@ -116,7 +116,7 @@ public class BasePoolDefinitionTests {
             PoolBehaviour newInstance = pool.Spawn(Vector3.zero, Quaternion.identity, Vector3.one);
 
             Assert.NotNull(newInstance);
-            BBAssert.AreEqual(Vector3.one, newInstance.LocalScale);
+            UnityAssert.AreEqual(Vector3.one, newInstance.LocalScale);
         });
     }
 }
