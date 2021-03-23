@@ -4,6 +4,7 @@ using UnityEditorInternal;
 using BBUnity.Pools;
 
 namespace BBUnity.Editor {
+    #if !UNITY_5_3_OR_NEWER //We only render this version in older Unity versions
     [CustomEditor(typeof(StaticPool), true)]
     public class StaticPoolInspector : UnityEditor.Editor {
 
@@ -122,4 +123,5 @@ namespace BBUnity.Editor {
             _reorderableList.DoLayoutList();
         }
     }
+    #endif
 }
