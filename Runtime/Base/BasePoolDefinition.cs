@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+using System;
 using System.Collections.Generic;
 
 namespace BBUnity.Pools {
@@ -21,6 +22,10 @@ namespace BBUnity.Pools {
 
         [SerializeField]
         private int _maximumSize = DefaultMaximumSize;
+
+        [Tooltip("Should we use disabled instances as well as 'avalible' instances")]
+        [SerializeField]
+        private bool _useDisabledInstances = true;
 
         /// <summary>
         /// The instances which belong to the pool definition
@@ -153,11 +158,20 @@ namespace BBUnity.Pools {
         }
 
         private PoolBehaviour GetOrCreateInstance() {
-            foreach(PoolBehaviour instance in _instances) {
+            if(_useDisabledInstances) {
+                foreach(PoolBehaviour instance in _instances) {
+                if(instance.Inactive || instance.Avalible) {
+                        return instance;
+                    }
+                }
+            } else {
+                foreach(PoolBehaviour instance in _instances) {
                 if(instance.Avalible) {
-                    return instance;
+                        return instance;
+                    }
                 }
             }
+            
 
             if(AllowGrowth) {
                 return AddNewInstance();
@@ -191,69 +205,21 @@ namespace BBUnity.Pools {
             return poolBehaviour;
         }
 
-        public PoolBehaviour Spawn(Vector3 position) {
+        public PoolBehaviour Spawn(Action<PoolBehaviour> beforeSpawn) {
             PoolBehaviour poolBehaviour = GetOrCreateInstance();
             if (poolBehaviour != null) {
-                poolBehaviour.SetPosition(position);
+                beforeSpawn(poolBehaviour);
                 poolBehaviour.OnSpawn();
             }
 
             return poolBehaviour;
         }
 
-        public PoolBehaviour Spawn(Vector3 position, Quaternion rotation) {
-            PoolBehaviour poolBehaviour = GetOrCreateInstance();
-            if (poolBehaviour != null) {
-                poolBehaviour.SetPosition(position);
-                poolBehaviour.SetRotation(rotation);
-                poolBehaviour.OnSpawn();
-            }
 
-            return poolBehaviour;
-        }
-
-        public PoolBehaviour Spawn(Vector3 position, Quaternion rotation, Vector3 localScale) {
-            PoolBehaviour poolBehaviour = GetOrCreateInstance();
-            if (poolBehaviour != null) {
-                poolBehaviour.SetPosition(position);
-                poolBehaviour.SetRotation(rotation);
-                poolBehaviour.SetLocalScale(localScale);
-                poolBehaviour.OnSpawn();
-            }
-
-            return poolBehaviour;
-        }
-
-        public PoolBehaviour Spawn(Transform parent, Vector3 position) {
+        public PoolBehaviour Spawn(Transform parent) {
             PoolBehaviour poolBehaviour = GetOrCreateInstance();
             if (poolBehaviour != null) {
                 poolBehaviour.SetParent(parent);
-                poolBehaviour.SetPosition(position);
-                poolBehaviour.OnSpawn();
-            }
-
-            return poolBehaviour;
-        }
-
-        public PoolBehaviour Spawn(Transform parent, Vector3 position, Quaternion rotation) {
-            PoolBehaviour poolBehaviour = GetOrCreateInstance();
-            if (poolBehaviour != null) {
-                poolBehaviour.SetParent(parent);
-                poolBehaviour.SetPosition(position);
-                poolBehaviour.SetRotation(rotation);
-                poolBehaviour.OnSpawn();
-            }
-
-            return poolBehaviour;
-        }
-
-        public PoolBehaviour Spawn(Transform parent, Vector3 position, Quaternion rotation, Vector3 localScale) {
-            PoolBehaviour poolBehaviour = GetOrCreateInstance();
-            if (poolBehaviour != null) {
-                poolBehaviour.SetParent(parent);
-                poolBehaviour.SetPosition(position);
-                poolBehaviour.SetRotation(rotation);
-                poolBehaviour.SetLocalScale(localScale);
                 poolBehaviour.OnSpawn();
             }
 

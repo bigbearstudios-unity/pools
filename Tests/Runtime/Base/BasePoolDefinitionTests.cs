@@ -84,42 +84,6 @@ namespace Base {
                 Assert.AreEqual(0, pool.NumberOfInstances);
             });
         }
-
-        [Test]
-        public void Spawn_ShouldSetThePosition() {
-            TestUtilities.CreateThenDestroyGameObject((GameObject obj) => {
-                BasePoolDefinition pool = new BasePoolDefinition(obj, 0, 1);
-
-                PoolBehaviour newInstance = pool.Spawn(new Vector3(1.0f, 1.0f, 1.0f));
-
-                Assert.NotNull(newInstance);
-                UnityAssert.AreEqual(new Vector3(1.0f, 1.0f, 1.0f), newInstance.Position);
-            });
-        }
-
-        [Test]
-        public void Spawn_ShouldSetTheRotation() {
-            TestUtilities.CreateThenDestroyGameObject((GameObject obj) => {
-                BasePoolDefinition pool = new BasePoolDefinition(obj, 0, 1);
-
-                PoolBehaviour newInstance = pool.Spawn(Vector3.zero, Quaternion.identity);
-
-                Assert.NotNull(newInstance);
-                UnityAssert.AreEqual(Quaternion.identity, newInstance.Rotation);
-            });
-        }
-
-        [Test]
-        public void Spawn_ShouldSetTheScale() {
-            TestUtilities.CreateThenDestroyGameObject((GameObject obj) => {
-                BasePoolDefinition pool = new BasePoolDefinition(obj, 0, 1);
-
-                PoolBehaviour newInstance = pool.Spawn(Vector3.zero, Quaternion.identity, Vector3.one);
-
-                Assert.NotNull(newInstance);
-                UnityAssert.AreEqual(Vector3.one, newInstance.LocalScale);
-            });
-        }
     }
 }
 

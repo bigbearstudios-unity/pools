@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -49,55 +50,19 @@ namespace BBUnity {
             return null;
         }
 
-        public PoolBehaviour Spawn(string definitionName, Vector3 position) {
+        public PoolBehaviour Spawn(string definitionName, Action<PoolBehaviour> beforeSpawn) {
             StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
             if(poolDefinition != null) {
-                return poolDefinition.Spawn(position);
+                return poolDefinition.Spawn(beforeSpawn);
             }
 
             return null;
         }
 
-        public PoolBehaviour Spawn(string definitionName, Vector3 position, Quaternion rotation) {
+        public PoolBehaviour Spawn(string definitionName, Transform parent) {
             StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
             if(poolDefinition != null) {
-                return poolDefinition.Spawn(position, rotation);
-            }
-
-            return null;
-        }
-
-        public PoolBehaviour Spawn(string definitionName, Vector3 position, Quaternion rotation, Vector3 localScale) {
-            StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
-            if(poolDefinition != null) {
-                return poolDefinition.Spawn(position, rotation, localScale);
-            }
-
-            return null;
-        }
-
-        public PoolBehaviour Spawn(string definitionName, Transform parent, Vector3 position) {
-            StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
-            if(poolDefinition != null) {
-                return poolDefinition.Spawn(parent, position);
-            }
-
-            return null;
-        }
-
-        public PoolBehaviour Spawn(string definitionName, Transform parent, Vector3 position, Quaternion rotation) {
-            StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
-            if(poolDefinition != null) {
-                return poolDefinition.Spawn(parent, position, rotation);
-            }
-
-            return null;
-        }
-
-        public PoolBehaviour Spawn(string definitionName, Transform parent, Vector3 position, Quaternion rotation, Vector3 localScale) {
-            StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
-            if(poolDefinition != null) {
-                return poolDefinition.Spawn(parent, position, rotation, localScale);
+                return poolDefinition.Spawn(parent);
             }
 
             return null;

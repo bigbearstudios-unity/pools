@@ -5,7 +5,7 @@ using UnityEditorInternal;
 using BBUnity.Pools;
 
 namespace BBUnity.Editor {
-    [CustomEditor(typeof(TimedPool))]
+    [CustomEditor(typeof(TimedPool), true)]
     public class TimedPoolInspector : UnityEditor.Editor {
 
         private ReorderableList _reorderableList;
@@ -26,7 +26,7 @@ namespace BBUnity.Editor {
             _reorderableList.onAddCallback += AddItem;
             _reorderableList.onRemoveCallback += RemoveItem;
             _reorderableList.onReorderCallbackWithDetails += ReorderCallbackDelegateWithDetails;
-            _reorderableList.elementHeight = 160.0f;
+            _reorderableList.elementHeight = 185.0f;
         }
 
         private void OnDisable() {
@@ -89,6 +89,13 @@ namespace BBUnity.Editor {
                 element.FindPropertyRelative("_prefab"),
                 GUIContent.none
             );
+
+            EditorGUI.LabelField(new Rect(rect.x, rect.y + 155, 100, EditorGUIUtility.singleLineHeight), "Use Disabled Instances");
+            EditorGUI.PropertyField(
+                new Rect(rect.x + 90, rect.y + 155, 125, EditorGUIUtility.singleLineHeight),
+                element.FindPropertyRelative("_useDisabledInstances"),
+                GUIContent.none
+            ); 
 
             if (EditorGUI.EndChangeCheck()) {
                 SaveSerializedObject();

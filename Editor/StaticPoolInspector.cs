@@ -4,7 +4,7 @@ using UnityEditorInternal;
 using BBUnity.Pools;
 
 namespace BBUnity.Editor {
-    [CustomEditor(typeof(StaticPool))]
+    [CustomEditor(typeof(StaticPool), true)]
     public class StaticPoolInspector : UnityEditor.Editor {
 
         private ReorderableList _reorderableList;
@@ -25,7 +25,7 @@ namespace BBUnity.Editor {
             _reorderableList.onAddCallback += AddItem;
             _reorderableList.onRemoveCallback += RemoveItem;
             _reorderableList.onReorderCallbackWithDetails += ReorderCallbackDelegateWithDetails;
-            _reorderableList.elementHeight = 110.0f;
+            _reorderableList.elementHeight = 130.0f;
         }
 
         private void OnDisable() {
@@ -72,6 +72,13 @@ namespace BBUnity.Editor {
             EditorGUI.PropertyField(
                 new Rect(rect.x + 90, rect.y + 85, 125, EditorGUIUtility.singleLineHeight),
                 element.FindPropertyRelative("_prefab"),
+                GUIContent.none
+            ); 
+
+            EditorGUI.LabelField(new Rect(rect.x, rect.y + 105, 100, EditorGUIUtility.singleLineHeight), "Use Disabled Instances");
+            EditorGUI.PropertyField(
+                new Rect(rect.x + 90, rect.y + 105, 125, EditorGUIUtility.singleLineHeight),
+                element.FindPropertyRelative("_useDisabledInstances"),
                 GUIContent.none
             ); 
 
