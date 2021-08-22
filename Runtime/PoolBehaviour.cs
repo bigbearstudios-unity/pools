@@ -1,26 +1,22 @@
 ﻿using UnityEngine;
-
 using BBUnity;
-using BBUnity.Pools;
+using BBUnity.Pools.Internal;
 
 namespace BBUnity {
 
-    public interface IPoolBehaviour {
-        void OnSpawned(PoolBehaviour behaviour);
-    }
-
     public class PoolBehaviour : BaseBehaviour {
 
+        /// <summary>
+        /// Is the behaviour avalible for spawning, internal variable
+        /// </summary>
         private bool _avalible = true;
 
+        /// <summary>
+        /// The PoolDefinition which the PoolBehaviour belongs too
+        /// </summary>
         private BasePoolDefinition _poolDefinition = null;
-        private BehaviourDelegate<IPoolBehaviour> _delegate;
 
         internal bool Avalible { get { return _avalible; } }
-
-        private void RegisterDelegate() {
-            _delegate = new BehaviourDelegate<IPoolBehaviour>(this);
-        }
 
         private void SetAvalible(bool avalible) {
             _avalible = avalible;
@@ -30,22 +26,19 @@ namespace BBUnity {
             _poolDefinition = poolDefinition;
         }
 
-        internal void OnCreate(BasePoolDefinition poolDefinition) {
+        internal void _OnCreate(BasePoolDefinition poolDefinition) {
             SetActive(false);
             SetAvalible(true);
             SetPoolDefinition(poolDefinition);
-            RegisterDelegate();
+
+            OnCreate();
         }
 
-        internal void OnSpawn() {
+        internal void _OnSpawn() {
             SetActive(true);
             SetAvalible(false);
 
-            _delegate.Process(CallOnSpawnDelegate);
-        }
-
-        private void CallOnSpawnDelegate(IPoolBehaviour behaviour) {
-            behaviour.OnSpawned(this);
+            OnSpawn();
         }
 
         public void Destroy() {
@@ -56,6 +49,14 @@ namespace BBUnity {
         public void Recycle() {
             SetAvalible(true);
             SetActive(false);
+        }
+
+        public virtual void OnCreate() {
+
+        }
+
+        public virtual void OnSpawn() {
+
         }
     }
 }

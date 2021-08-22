@@ -1,14 +1,20 @@
 ﻿using UnityEngine;
-
-using System;
 using System.Collections.Generic;
 
-namespace BBUnity.Pools {
+namespace BBUnity.Pools.Internal {
 
     [System.Serializable]
     public class BasePoolDefinition {
 
-        public const int DefaultMaximumSize = 99999;
+        /// <summary>
+        /// The default maximum size of the pool definition
+        /// </summary>
+        public const int DefaultMaximumSize = 500;
+
+        /// <summary>
+        /// The default starting size of the pool definition,
+        /// E.g. How many of the PoolBehaviours are spawned upon Awake
+        /// </summary>
         public const int DefaultStartingSize = 0;
 
         [SerializeField]
@@ -182,7 +188,7 @@ namespace BBUnity.Pools {
 
         private PoolBehaviour CreateInstance() {
             PoolBehaviour poolBehaviour = Utilities.InstantiateWithComponent<PoolBehaviour>(_prefab, _defaultParent);
-            poolBehaviour.OnCreate(this);
+            poolBehaviour._OnCreate(this);
             return poolBehaviour;
         }
 
@@ -199,28 +205,28 @@ namespace BBUnity.Pools {
         public PoolBehaviour Spawn() {
             PoolBehaviour poolBehaviour = GetOrCreateInstance();
             if (poolBehaviour != null) {
-                poolBehaviour.OnSpawn();
+                poolBehaviour._OnSpawn();
             }
 
             return poolBehaviour;
         }
 
-        public PoolBehaviour Spawn(Action<PoolBehaviour> beforeSpawn) {
+        public PoolBehaviour Spawn(System.Action<PoolBehaviour> beforeSpawn, System.Action<PoolBehaviour> afterSpawn) {
             PoolBehaviour poolBehaviour = GetOrCreateInstance();
             if (poolBehaviour != null) {
                 beforeSpawn(poolBehaviour);
-                poolBehaviour.OnSpawn();
+                poolBehaviour._OnSpawn();
+                afterSpawn(poolBehaviour);
             }
 
             return poolBehaviour;
         }
-
 
         public PoolBehaviour Spawn(Transform parent) {
             PoolBehaviour poolBehaviour = GetOrCreateInstance();
             if (poolBehaviour != null) {
                 poolBehaviour.SetParent(parent);
-                poolBehaviour.OnSpawn();
+                poolBehaviour._OnSpawn();
             }
 
             return poolBehaviour;

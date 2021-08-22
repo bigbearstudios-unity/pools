@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
-
-using BBUnity.Pools;
+using BBUnity.Pools.Internal;
 
 namespace BBUnity {
 

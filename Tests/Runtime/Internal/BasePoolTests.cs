@@ -1,10 +1,10 @@
 ﻿using NUnit.Framework;
 
 using BBUnity;
-using BBUnity.Pools;
+using BBUnity.Pools.Internal;
 using BBUnity.TestSupport;
 
-namespace Base {
+namespace Internal {
     public class BasePoolTests {
 
         [Test]

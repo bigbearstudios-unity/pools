@@ -1,10 +1,7 @@
 ﻿using UnityEngine;
-
-using System;
 using System.Collections.Generic;
 
-
-namespace BBUnity.Pools {
+namespace BBUnity.Pools.Internal {
     public abstract class BasePool : MonoBehaviour {
         protected Dictionary<string, int> _poolLookups;
 
@@ -81,7 +78,7 @@ namespace BBUnity.Pools {
 
         public static T Find<T>(string name) where T : BasePool {
             foreach(T pool in FindObjectsOfType<T>()) {
-                if(String.Equals(pool.name, name)) {
+                if(string.Equals(pool.name, name)) {
                     return pool;
                 }
             }

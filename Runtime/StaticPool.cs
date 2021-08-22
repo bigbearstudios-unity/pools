@@ -1,9 +1,6 @@
-﻿using System;
+﻿using UnityEngine;
+using BBUnity.Pools.Internal;
 using System.Collections.Generic;
-
-using UnityEngine;
-
-using BBUnity.Pools;
 
 namespace BBUnity {
 
@@ -50,10 +47,10 @@ namespace BBUnity {
             return null;
         }
 
-        public PoolBehaviour Spawn(string definitionName, Action<PoolBehaviour> beforeSpawn) {
+        public PoolBehaviour Spawn(string definitionName, System.Action<PoolBehaviour> beforeSpawn, System.Action<PoolBehaviour> afterSpawn) {
             StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
             if(poolDefinition != null) {
-                return poolDefinition.Spawn(beforeSpawn);
+                return poolDefinition.Spawn(beforeSpawn, afterSpawn);
             }
 
             return null;
