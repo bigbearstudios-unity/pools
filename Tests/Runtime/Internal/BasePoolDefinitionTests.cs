@@ -84,6 +84,26 @@ namespace Internal {
                 Assert.AreEqual(0, pool.NumberOfInstances);
             });
         }
+
+        [Test]
+        public void Spawn_ShouldTriggerOnSpawnEvent() {
+            TestUtilities.CreateThenDestroyGameObject((GameObject obj) => {
+                BasePoolDefinition pool = new BasePoolDefinition(obj, 5, 6);
+
+                bool spawnOccured = false;
+                pool.OnSpawnEvent += (PoolBehaviour behaviour) => {
+                    spawnOccured = true;
+                };
+
+                PoolBehaviour newInstance = pool.Spawn();
+
+                Assert.True(pool.AllowGrowth);
+                Assert.NotNull(newInstance);
+                Assert.AreEqual(5, pool.NumberOfInstances);
+                Assert.AreEqual(4, pool.NumberOfAvalibleInstances);
+                Assert.True(spawnOccured);
+            });
+        }
     }
 }
 

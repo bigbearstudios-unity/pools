@@ -6,6 +6,8 @@ namespace BBUnity.Pools.Internal {
     [System.Serializable]
     public class BasePoolDefinition {
 
+        public delegate void OnSpawnHandler(PoolBehaviour poolBehaviour);
+
         /// <summary>
         /// The default maximum size of the pool definition
         /// </summary>
@@ -42,6 +44,8 @@ namespace BBUnity.Pools.Internal {
         /// The parent which will be applied to each instance by default (This can be overridden)
         /// </summary>
         private Transform _defaultParent = null;
+
+        public event OnSpawnHandler OnSpawnEvent;
 
         public string Name {
             get { return (_name != null && _name.Length > 0) ? _name : _prefab.name; }
@@ -206,6 +210,7 @@ namespace BBUnity.Pools.Internal {
             PoolBehaviour poolBehaviour = GetOrCreateInstance();
             if (poolBehaviour != null) {
                 poolBehaviour._OnSpawn();
+                OnSpawnEvent?.Invoke(poolBehaviour);
             }
 
             return poolBehaviour;
@@ -216,6 +221,7 @@ namespace BBUnity.Pools.Internal {
             if (poolBehaviour != null) {
                 beforeSpawn(poolBehaviour);
                 poolBehaviour._OnSpawn();
+                OnSpawnEvent?.Invoke(poolBehaviour);
                 afterSpawn(poolBehaviour);
             }
 
@@ -227,6 +233,7 @@ namespace BBUnity.Pools.Internal {
             if (poolBehaviour != null) {
                 poolBehaviour.SetParent(parent);
                 poolBehaviour._OnSpawn();
+                OnSpawnEvent?.Invoke(poolBehaviour);
             }
 
             return poolBehaviour;
