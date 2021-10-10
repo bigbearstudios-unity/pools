@@ -19,18 +19,13 @@ namespace BBUnity {
             }
         }
 
-        private void Activate() {
-            gameObject.SetActive(true);
-        }
-
-        private void Deactivate() {
-            gameObject.SetActive(false);
-        }
-
         private void Update() {
             float time = Time.deltaTime;
             foreach (TimedPoolDefinition poolDefinition in _poolDefinitions) {
-                poolDefinition.Update(time);
+                PoolBehaviour poolBehaviour = poolDefinition.Update(time);
+                if(poolBehaviour) {
+                    _OnSpawn(poolBehaviour);
+                }
             }
         }
 

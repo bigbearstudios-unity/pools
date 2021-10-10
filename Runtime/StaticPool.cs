@@ -41,7 +41,12 @@ namespace BBUnity {
         public PoolBehaviour Spawn(string definitionName) {
             StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
             if(poolDefinition != null) {
-                return poolDefinition.Spawn();
+                PoolBehaviour poolBehaviour = poolDefinition.Spawn();
+                if(poolBehaviour) {
+                    _OnSpawn(poolBehaviour);
+                }
+
+                return poolBehaviour;
             }
 
             return null;
@@ -50,7 +55,12 @@ namespace BBUnity {
         public PoolBehaviour Spawn(string definitionName, System.Action<PoolBehaviour> beforeSpawn, System.Action<PoolBehaviour> afterSpawn) {
             StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
             if(poolDefinition != null) {
-                return poolDefinition.Spawn(beforeSpawn, afterSpawn);
+                PoolBehaviour poolBehaviour = poolDefinition.Spawn(beforeSpawn, afterSpawn);
+                if(poolBehaviour) {
+                    _OnSpawn(poolBehaviour);
+                }
+
+                return poolBehaviour;
             }
 
             return null;
@@ -59,7 +69,12 @@ namespace BBUnity {
         public PoolBehaviour Spawn(string definitionName, Transform parent) {
             StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
             if(poolDefinition != null) {
-                return poolDefinition.Spawn(parent);
+                PoolBehaviour poolBehaviour = poolDefinition.Spawn(parent);
+                if(poolBehaviour) {
+                    _OnSpawn(poolBehaviour);
+                }
+
+                return poolBehaviour;
             }
 
             return null;

@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 
 namespace BBUnity.Pools.Internal {
-    public abstract class BasePool : MonoBehaviour {
+    public abstract class BasePool : BaseBehaviour {
+
+        public delegate void OnSpawnEventHandler(PoolBehaviour poolBehaviour);
+
+        /// <summary>
+        /// The Dictionary which holds all of the poolLookups. This is a collection
+        /// of strings with their associated int
+        /// </summary>
         protected Dictionary<string, int> _poolLookups;
 
-        public string Name {
-            get { return name; }
-            set { name =  value; }
-        }
+        /// <summary>
+        /// The OnSpawnEvent, calls the delegates when
+        /// </summary>
+        public event OnSpawnEventHandler OnSpawnEvent;
 
         protected abstract IReadOnlyList<BasePoolDefinition> Definitions{ get; }
 
@@ -21,10 +28,6 @@ namespace BBUnity.Pools.Internal {
         }
 
         protected virtual void CreateDefinitions() {}
-
-        public void SetName(string name) {
-            this.name = name;
-        }
 
         /// <summary>
         /// CreateDefinitions. Only used when the poolLookups have been assigned
@@ -70,6 +73,15 @@ namespace BBUnity.Pools.Internal {
             }
 
             return null;
+        }
+
+        protected void _OnSpawn(PoolBehaviour poolBehaviour) {
+            OnSpawn(poolBehaviour);
+            OnSpawnEvent?.Invoke(poolBehaviour);
+        }
+
+        protected virtual void OnSpawn(PoolBehaviour poolBehaviour) {
+            
         }
 
         /*

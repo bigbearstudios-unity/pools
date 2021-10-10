@@ -12,7 +12,7 @@ namespace BBUnity {
         [SerializeField]
         private bool _active = DefaultActive;
 
-        [SerializeField]
+        [SerializeField, Tooltip("The time required to spawn an enemy in seconds")]
         private float _spawnTime = DefaultSpawnTime;
 
         private float _lastSpawnedAt = 0.0f;
@@ -68,14 +68,16 @@ namespace BBUnity {
             _active = false;
         }
 
-        internal void Update(float time) {
+        internal PoolBehaviour Update(float time) {
             if(Active) {
                 _lastSpawnedAt += time;
                 if (ShouldSpawn) {
                     _lastSpawnedAt = _lastSpawnedAt - _spawnTime;
-                    Spawn();
+                    return Spawn();
                 }
             }
+
+            return null;
         }
     }
 }

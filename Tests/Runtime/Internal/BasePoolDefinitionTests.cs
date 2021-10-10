@@ -96,11 +96,6 @@ namespace Internal {
                 };
 
                 PoolBehaviour newInstance = pool.Spawn();
-
-                Assert.True(pool.AllowGrowth);
-                Assert.NotNull(newInstance);
-                Assert.AreEqual(5, pool.NumberOfInstances);
-                Assert.AreEqual(4, pool.NumberOfAvalibleInstances);
                 Assert.True(spawnOccured);
             });
         }
