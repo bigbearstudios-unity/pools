@@ -1,93 +1,65 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace BBUnity.Pools.Internal {
     public abstract class BasePool : BaseBehaviour {
 
-        public delegate void OnSpawnEventHandler(PoolBehaviour poolBehaviour);
-
-        /// <summary>
-        /// The Dictionary which holds all of the poolLookups. This is a collection
-        /// of strings with their associated int
-        /// </summary>
-        protected Dictionary<string, int> _poolLookups;
-
-        /// <summary>
-        /// The OnSpawnEvent, calls the delegates when
-        /// </summary>
-        public event OnSpawnEventHandler OnSpawnEvent;
-
+        protected Dictionary<string, int> _poolLookups = new Dictionary<string, int>();
         protected abstract IReadOnlyList<BasePoolDefinition> Definitions{ get; }
 
-        private void Awake() {
-            CreateDefinitions();
-        }
+        /// <summary>
+        /// Awake, creates the definitions. Must be called upon subclassing.
+        /// </summary>
+        protected void Awake() {
+            CreatePoolDefinitions();
 
-        private void Start() {
-            SetupDefinitions();
+            foreach(BasePoolDefinition poolDefinition in Definitions) {
+                SetupPoolDefinition(poolDefinition);
+            }
         }
-
-        protected virtual void CreateDefinitions() {}
 
         /// <summary>
-        /// CreateDefinitions. Only used when the poolLookups have been assigned
-        /// via the Unity editor
+        /// Sets up a pool definition to be ready for spawning. An error will be logged
+        /// if the poolDefinition is invalid
         /// </summary>
-        private void SetupDefinitions() {
-            IEnumerable<BasePoolDefinition> poolDefinitions = Definitions;
-            foreach(BasePoolDefinition poolDefinition in poolDefinitions) {
-                if(poolDefinition.Valid) {
-                    SetupPoolDefinition(poolDefinition);
-                }
-            }
-        }
-
-        private void AddPoolLookup(string poolDefinitionName) {
-            if(_poolLookups == null) {
-                _poolLookups = new Dictionary<string, int>();
-            }
-
-            _poolLookups.Add(poolDefinitionName, _poolLookups.Count);
-        }
-
         protected void SetupPoolDefinition(BasePoolDefinition poolDefinition) {
+            if(poolDefinition.Invalid) {
+                Debug.LogException(new Exception("BasePoolDefinition - No prefab to instantiate"), this);
+            }
+
             poolDefinition.SetDefaultParent(CreatePoolContainer(poolDefinition));
             poolDefinition.RefreshInstances();
-
-            AddPoolLookup(poolDefinition.Name);
+            _poolLookups.Add(poolDefinition.Name, _poolLookups.Count);
         }
 
+        /// <summary>
+        /// Creates a container for the poolDefinition using the name of the pool definition
+        /// as its GameObject name
+        /// </summary>
         private Transform CreatePoolContainer(BasePoolDefinition poolDefinition) {
-            GameObject obj = Utilities.CreateGameObject(poolDefinition.Name, transform);
-            obj.transform.position = Vector3.zero;
-            obj.transform.position = Vector3.zero;
-
-            return obj.transform;
+            return Utilities.CreateGameObject(poolDefinition.Name, transform).transform;
         }
 
+        /// <summary>
+        /// Finds a pool definition for a given name. A type can be provided so that subclasses of 
+        /// the pool definitions can be specified.
+        /// </summary>
         public T FindPoolDefinition<T>(string definitionName) where T : BasePoolDefinition {
-            if(_poolLookups != null) {
-                if(_poolLookups.TryGetValue(definitionName, out int poolId)) {
-                    return (T)Definitions[poolId];
-                }
+            if(_poolLookups != null && _poolLookups.TryGetValue(definitionName, out int poolId)) {
+                return (T)Definitions[poolId];
             }
 
             return null;
         }
 
-        protected void _OnSpawn(PoolBehaviour poolBehaviour) {
-            OnSpawn(poolBehaviour);
-            OnSpawnEvent?.Invoke(poolBehaviour);
-        }
+        protected abstract void CreatePoolDefinitions();
+        protected virtual void OnSpawn(PoolBehaviour poolBehaviour) { }
 
-        protected virtual void OnSpawn(PoolBehaviour poolBehaviour) {
-            
-        }
-
-        /*
-         * Static Methods
-         */
-
+        /// <summary>
+        /// Returns a pool of a given name. The easiest way to find a pool without 
+        /// mapping it directly in the inspector
+        /// </summary>
         public static T Find<T>(string name) where T : BasePool {
             foreach(T pool in FindObjectsOfType<T>()) {
                 if(string.Equals(pool.name, name)) {

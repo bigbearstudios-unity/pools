@@ -35,19 +35,8 @@ namespace BBUnity.Pools.Internal {
         [SerializeField]
         private bool _useDisabledInstances = true;
 
-        /// <summary>
-        /// The instances which belong to the pool definition
-        /// </summary>
         private List<PoolBehaviour> _instances = null;
-
-        /// <summary>
-        /// The parent which will be applied to each instance by default (This can be overridden)
-        /// </summary>
         private Transform _defaultParent = null;
-
-        /// <summary>
-        /// Allows the
-        /// </summary>
         public event OnSpawnEventHandler OnSpawnEvent;
 
         public string Name {
@@ -58,6 +47,10 @@ namespace BBUnity.Pools.Internal {
         public GameObject Prefab {
             get { return _prefab; }
             set { _prefab = value; }
+        }
+
+        public bool HasPrefab {
+            get { return _prefab != null; }
         }
 
         public int StartingSize {
@@ -92,19 +85,14 @@ namespace BBUnity.Pools.Internal {
         }
 
         public bool Valid {
-            get {
-                if(_prefab == null) {
-                    Debug.LogError("BasePoolDefinition.Validate - No prefab to instantiate");
-                    return false;
-                }
-
-                return true;
-            }
+            get { return (_prefab != null); }
         }
 
-        public BasePoolDefinition() {
-        
+        public bool Invalid {
+            get { return !Valid; }
         }
+
+        public BasePoolDefinition() { }
 
         public BasePoolDefinition(GameObject prefab) {
             SetPrefab(prefab);
@@ -166,11 +154,11 @@ namespace BBUnity.Pools.Internal {
         public void RefreshInstances() {
             _instances = new List<PoolBehaviour>(_startingSize);
             while(_instances.Count < _startingSize) {
-                AddNewInstance();
+                CreateInstance();
             }
         }
 
-        private PoolBehaviour GetOrCreateInstance() {
+        internal PoolBehaviour GetOrCreateInstance() {
             if(_useDisabledInstances) {
                 foreach(PoolBehaviour instance in _instances) {
                     if(instance.Inactive || instance.Avalible) {
@@ -185,64 +173,52 @@ namespace BBUnity.Pools.Internal {
                 }
             }
             
-
             if(AllowGrowth) {
-                return AddNewInstance();
+                return CreateInstance();
             }
 
             return null;
         }
 
-        /// 
         private PoolBehaviour InstantiateInstance() {
-            PoolBehaviour poolBehaviour = Utilities.InstantiateWithComponent<PoolBehaviour>(_prefab, _defaultParent);
+            PoolBehaviour poolBehaviour = Utilities.InstantiateWithComponent<PoolBehaviour>(_prefab, _defaultParent, true);
             poolBehaviour._OnCreate(this);
             return poolBehaviour;
         }
 
-        private PoolBehaviour AddNewInstance() {
+        private PoolBehaviour CreateInstance() {
             return Utilities.Tap(InstantiateInstance(), (PoolBehaviour instance) => {
                 _instances.Add(instance);
             });
+        }
+
+        internal void _InvokeOnSpawnEvent(PoolBehaviour poolBehaviour) {
+            OnSpawnEvent?.Invoke(poolBehaviour);
+        }
+
+        /*
+         * Internal Spawn Method.
+         * Calls the internal spawn event but doesn't call spawn on
+         */
+        internal PoolBehaviour _Spawn() {
+            return GetOrCreateInstance();
         }
 
         /*
          * Public Spawn Methods
          */
 
+        /*
+         * Spawns the PoolBehaviour, will call the underlying OnSpawnEvent if set and also
+         * poolBehaviour.OnSpawn
+         */
         public PoolBehaviour Spawn() {
             PoolBehaviour poolBehaviour = GetOrCreateInstance();
             if(poolBehaviour != null) {
-                OnSpawn(poolBehaviour);
+                poolBehaviour._OnSpawn();
             }
 
             return poolBehaviour;
-        }
-
-        public PoolBehaviour Spawn(System.Action<PoolBehaviour> beforeSpawn, System.Action<PoolBehaviour> afterSpawn) {
-            PoolBehaviour poolBehaviour = GetOrCreateInstance();
-            if(poolBehaviour != null) {
-                beforeSpawn(poolBehaviour);
-                OnSpawn(poolBehaviour);
-                afterSpawn(poolBehaviour);
-            }
-
-            return poolBehaviour;
-        }
-
-        public PoolBehaviour Spawn(Transform parent) {
-            PoolBehaviour poolBehaviour = GetOrCreateInstance();
-            if(poolBehaviour != null) {
-                poolBehaviour.SetParent(parent);
-                OnSpawn(poolBehaviour);
-            }
-
-            return poolBehaviour;
-        }
-
-        private void OnSpawn(PoolBehaviour poolBehaviour ) {
-            poolBehaviour._OnSpawn();
-            OnSpawnEvent?.Invoke(poolBehaviour);
         }
     }
 }

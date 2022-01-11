@@ -13,20 +13,79 @@ namespace BBUnity {
 
         protected override IReadOnlyList<BasePoolDefinition> Definitions { get { return _poolDefinitions; } }
 
-        protected override void CreateDefinitions() {
-            if(_poolDefinitions == null) {
+        protected override void CreatePoolDefinitions() {
+            if(_poolDefinitions is null) {
                 _poolDefinitions = new List<StaticPoolDefinition>();
             }
         }
 
-        /// <summary>
-        /// Adds a pool definition on the fly. Allows pools to be build using code rather than
-        /// from within the Unity editor
-        /// </summary>
-        /// <param name="poolDefinition"></param>
-        /// <returns>True/False for if the PoolDefinition got added</returns>
+        private PoolBehaviour _Spawn(string definitionName) {
+            StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
+            if(poolDefinition != null) {
+                return poolDefinition._Spawn();
+            } else {
+                Debug.LogErrorFormat("No Pool Definition found for the name: {0}", definitionName);
+            }
+
+            return null;
+        }
+
+        public PoolBehaviour Spawn(string definitionName) {
+            PoolBehaviour poolBehaviour = _Spawn(definitionName);
+            if(poolBehaviour != null) {
+                poolBehaviour._OnSpawn();
+            }
+
+            return null;
+        }
+
+        public PoolBehaviour Spawn(string definitionName, Vector3 position) {
+            PoolBehaviour poolBehaviour = _Spawn(definitionName);
+            if(poolBehaviour != null) {
+                poolBehaviour.SetPosition(position);
+                poolBehaviour._OnSpawn();
+            }
+
+            return null;
+        }
+
+        public PoolBehaviour Spawn(string definitionName, Vector3 position, Vector3 scale) {
+            Debug.Log("Calling Spawn");
+            Debug.Log(position);
+            Debug.Log(scale);
+            PoolBehaviour poolBehaviour = _Spawn(definitionName);
+            if(poolBehaviour != null) {
+                poolBehaviour.SetPosition(position);
+                poolBehaviour.SetLocalScale(scale);
+                poolBehaviour._OnSpawn();
+            }
+
+            return null;
+        }
+
+        public PoolBehaviour Spawn(string definitionName, Transform parent) {
+            PoolBehaviour poolBehaviour = _Spawn(definitionName);
+            if(poolBehaviour != null) {
+                poolBehaviour.SetParent(parent);
+                poolBehaviour._OnSpawn();
+            }
+
+            return null;
+        }
+
+        public PoolBehaviour Spawn(string definitionName, System.Action<PoolBehaviour> beforeSpawn, System.Action<PoolBehaviour> afterSpawn) {
+            PoolBehaviour poolBehaviour = _Spawn(definitionName);
+            if(poolBehaviour != null) {
+                beforeSpawn(poolBehaviour);
+                poolBehaviour._OnSpawn();
+                afterSpawn(poolBehaviour);
+            }
+
+            return null;
+        }
+
         public void AddPoolDefinition(StaticPoolDefinition poolDefinition) {
-            if(!poolDefinition.Valid) {
+            if(poolDefinition.Invalid) {
                 Debug.LogError("Pool.AddPoolDefinition - An invalid definition was passed");
             }
 
@@ -38,44 +97,18 @@ namespace BBUnity {
             _poolDefinitions.Add(poolDefinition);
         }
 
-        public PoolBehaviour Spawn(string definitionName) {
-            StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
-            if(poolDefinition != null) {
-                PoolBehaviour poolBehaviour = poolDefinition.Spawn();
-                if(poolBehaviour) {
-                    _OnSpawn(poolBehaviour);
+        /// <summary>
+        /// Returns a pool of a given name. The easiest way to find a pool without 
+        /// mapping it directly in the inspector
+        /// </summary>
+        public static StaticPool Find(string name) {
+            foreach(StaticPool pool in FindObjectsOfType<StaticPool>()) {
+                if(string.Equals(pool.name, name)) {
+                    return pool;
                 }
-
-                return poolBehaviour;
             }
 
-            return null;
-        }
-
-        public PoolBehaviour Spawn(string definitionName, System.Action<PoolBehaviour> beforeSpawn, System.Action<PoolBehaviour> afterSpawn) {
-            StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
-            if(poolDefinition != null) {
-                PoolBehaviour poolBehaviour = poolDefinition.Spawn(beforeSpawn, afterSpawn);
-                if(poolBehaviour) {
-                    _OnSpawn(poolBehaviour);
-                }
-
-                return poolBehaviour;
-            }
-
-            return null;
-        }
-
-        public PoolBehaviour Spawn(string definitionName, Transform parent) {
-            StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
-            if(poolDefinition != null) {
-                PoolBehaviour poolBehaviour = poolDefinition.Spawn(parent);
-                if(poolBehaviour) {
-                    _OnSpawn(poolBehaviour);
-                }
-
-                return poolBehaviour;
-            }
+            Debug.LogError($"Pool.Find - Error finding pool: { name }");
 
             return null;
         }

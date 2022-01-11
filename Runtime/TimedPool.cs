@@ -13,9 +13,9 @@ namespace BBUnity {
 
         protected override IReadOnlyList<BasePoolDefinition> Definitions { get { return _poolDefinitions; } }
 
-        protected override void CreateDefinitions() {
+        protected override void CreatePoolDefinitions() {
             if(_poolDefinitions == null) {
-                _poolDefinitions =  new List<TimedPoolDefinition>();
+                _poolDefinitions = new List<TimedPoolDefinition>();
             }
         }
 
@@ -24,7 +24,7 @@ namespace BBUnity {
             foreach (TimedPoolDefinition poolDefinition in _poolDefinitions) {
                 PoolBehaviour poolBehaviour = poolDefinition.Update(time);
                 if(poolBehaviour) {
-                    _OnSpawn(poolBehaviour);
+                    poolBehaviour._OnSpawn();
                 }
             }
         }
@@ -71,6 +71,22 @@ namespace BBUnity {
 
         private void AddInternalPoolDefinition(TimedPoolDefinition poolDefinition) {
             _poolDefinitions.Add(poolDefinition);
+        }
+
+        /// <summary>
+        /// Returns a pool of a given name. The easiest way to find a pool without 
+        /// mapping it directly in the inspector
+        /// </summary>
+        public static TimedPool Find(string name) {
+            foreach(TimedPool pool in FindObjectsOfType<TimedPool>()) {
+                if(string.Equals(pool.name, name)) {
+                    return pool;
+                }
+            }
+
+            Debug.LogError($"Pool.Find - Error finding pool: { name }");
+
+            return null;
         }
     }
 }

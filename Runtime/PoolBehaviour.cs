@@ -9,20 +9,13 @@ namespace BBUnity {
         public delegate void OnCreateEventHandler(PoolBehaviour poolBehaviour);
         public delegate void OnSpawnEventHandler(PoolBehaviour poolBehaviour);
 
-        /// <summary>
-        /// Is the behaviour avalible for spawning, internal variable
-        /// </summary>
         private bool _avalible = true;
-
-        /// <summary>
-        /// The PoolDefinition which the PoolBehaviour belongs too
-        /// </summary>
         private BasePoolDefinition _poolDefinition = null;
 
         public event OnCreateEventHandler OnCreateEvent;
         public event OnSpawnEventHandler OnSpawnEvent;
 
-        internal bool Avalible { get { return _avalible; } }
+        public bool Avalible { get { return _avalible; } }
 
         private void SetAvalible(bool avalible) {
             _avalible = avalible;
@@ -32,14 +25,35 @@ namespace BBUnity {
             _poolDefinition = poolDefinition;
         }
 
+        /// <summary>
+        /// Iterates through all of the attached components to find IPoolBehaviour,
+        /// foreach one found assigns an onCreateEvent, onSpawnEvent
+        /// </summary>
+        private void AssignCallbackInterfaceEvents() {
+            IPoolBehaviour[] callbacks = GetComponents<IPoolBehaviour>();
+            foreach(IPoolBehaviour behaviour in callbacks) {
+                OnCreateEvent += behaviour.OnCreate;
+                OnSpawnEvent += behaviour.OnSpawn;
+            }
+            
+        }
+
+        /// <summary>
+        /// Called internally upon creation.
+        /// </summary>
         internal void _OnCreate(BasePoolDefinition poolDefinition) {
             SetActive(false);
             SetAvalible(true);
             SetPoolDefinition(poolDefinition);
 
+            AssignCallbackInterfaceEvents();
+
             CallOnCreateCallbacks();
         }
 
+        /// <summary>
+        /// Called internally upon Spawn
+        /// </summary>
         internal void _OnSpawn() {
             SetActive(true);
             SetAvalible(false);
@@ -61,14 +75,19 @@ namespace BBUnity {
 
         private void CallOnCreateCallbacks() {
             OnCreate();
-
             OnCreateEvent?.Invoke(this);
         }
 
+        /// <summary>
+        /// Calls all of the OnSpawn callbacks in the following order: 
+        /// - virtual OnSpawn
+        /// - OnSpawnEvent
+        /// - poolDefinition.OnSpawnEvent
+        /// </summary>
         private void CallOnSpawnCallbacks() {
             OnSpawn();
-
             OnSpawnEvent?.Invoke(this);
+            _poolDefinition._InvokeOnSpawnEvent(this);
         }
 
         /// <summary>

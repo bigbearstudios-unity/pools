@@ -13,7 +13,7 @@ namespace Internal {
         public void Valid_ShouldBeValid_WithAPrefab() {
             TestUtilities.CreateThenDestroyGameObject((GameObject obj) => {
                 BasePoolDefinition pool = new BasePoolDefinition(obj);
-                Assert.True(pool.Valid);
+                Assert.True(pool.HasPrefab);
             });
         }
 
@@ -82,21 +82,6 @@ namespace Internal {
                 Assert.False(pool.AllowGrowth);
                 Assert.Null(newInstance);
                 Assert.AreEqual(0, pool.NumberOfInstances);
-            });
-        }
-
-        [Test]
-        public void Spawn_ShouldTriggerOnSpawnEvent() {
-            TestUtilities.CreateThenDestroyGameObject((GameObject obj) => {
-                BasePoolDefinition pool = new BasePoolDefinition(obj, 5, 6);
-
-                bool spawnOccured = false;
-                pool.OnSpawnEvent += (PoolBehaviour behaviour) => {
-                    spawnOccured = true;
-                };
-
-                PoolBehaviour newInstance = pool.Spawn();
-                Assert.True(spawnOccured);
             });
         }
     }
