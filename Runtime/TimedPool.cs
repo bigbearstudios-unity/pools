@@ -13,6 +13,14 @@ namespace BBUnity {
 
         protected override IReadOnlyList<BasePoolDefinition> Definitions { get { return _poolDefinitions; } }
 
+        public TimedPoolDefinition FindPoolDefinition(string definitionName) {
+            if(_poolLookups != null && _poolLookups.TryGetValue(definitionName, out int poolId)) {
+                return (TimedPoolDefinition)Definitions[poolId];
+            }
+
+            return null;
+        }
+
         protected override void CreatePoolDefinitions() {
             if(_poolDefinitions == null) {
                 _poolDefinitions = new List<TimedPoolDefinition>();

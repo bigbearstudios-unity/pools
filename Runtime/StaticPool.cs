@@ -19,8 +19,16 @@ namespace BBUnity {
             }
         }
 
+        public StaticPoolDefinition FindPoolDefinition(string definitionName) {
+            if(_poolLookups != null && _poolLookups.TryGetValue(definitionName, out int poolId)) {
+                return (StaticPoolDefinition)Definitions[poolId];
+            }
+
+            return null;
+        }
+
         private PoolBehaviour _Spawn(string definitionName) {
-            StaticPoolDefinition poolDefinition = FindPoolDefinition<StaticPoolDefinition>(definitionName);
+            StaticPoolDefinition poolDefinition = FindPoolDefinition(definitionName);
             if(poolDefinition != null) {
                 return poolDefinition._Spawn();
             } else {
@@ -50,9 +58,6 @@ namespace BBUnity {
         }
 
         public PoolBehaviour Spawn(string definitionName, Vector3 position, Vector3 scale) {
-            Debug.Log("Calling Spawn");
-            Debug.Log(position);
-            Debug.Log(scale);
             PoolBehaviour poolBehaviour = _Spawn(definitionName);
             if(poolBehaviour != null) {
                 poolBehaviour.SetPosition(position);
@@ -67,6 +72,28 @@ namespace BBUnity {
             PoolBehaviour poolBehaviour = _Spawn(definitionName);
             if(poolBehaviour != null) {
                 poolBehaviour.SetParent(parent);
+                poolBehaviour._OnSpawn();
+            }
+
+            return null;
+        }
+
+        public PoolBehaviour Spawn(string definitionName, Transform parent, Vector3 position, Vector3 scale) {
+            PoolBehaviour poolBehaviour = _Spawn(definitionName);
+            if(poolBehaviour != null) {
+                poolBehaviour.SetParent(parent);
+                poolBehaviour.SetPosition(position);
+                poolBehaviour.SetLocalScale(scale);
+                poolBehaviour._OnSpawn();
+            }
+
+            return null;
+        }
+
+        public PoolBehaviour Spawn(string definitionName, System.Action<PoolBehaviour> beforeSpawn) {
+            PoolBehaviour poolBehaviour = _Spawn(definitionName);
+            if(poolBehaviour != null) {
+                beforeSpawn(poolBehaviour);
                 poolBehaviour._OnSpawn();
             }
 
