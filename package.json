@@ -1,6 +1,6 @@
 {
   "name": "com.bigbearstudios.bbunity-pools",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "displayName": "BBUnity Pools",
   "description": "",
   "unity": "2018.3",
@@ -20,6 +20,6 @@
   }],
   "dependencies": {
     "com.bigbearstudios.bbunity-core": "1.0.0",
-    "com.bigbearstudios.bbunity-test-support": "0.3.0"
+    "com.bigbearstudios.bbunity-test-support": "1.1.0"
   }
 }
