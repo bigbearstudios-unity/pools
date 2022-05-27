@@ -1,8 +1,8 @@
 {
   "name": "com.bigbearstudios.bbunity-pools",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "displayName": "BBUnity Pools",
-  "description": "",
+  "description": "Pool system for Unity - Requires Unity / C# to use",
   "unity": "2018.3",
   "repository": {
     "type": "git",
@@ -14,12 +14,14 @@
     "email": "development@bigbearstudios.co.uk",
     "url": "https://bigbearstudios.co.uk/opensource"
   },
-  "contributors": [{
-    "name": "Stuart Farnaby",
-    "email": "stuart@bigbearstudios.co.uk"
-  }],
+  "contributors": [
+    {
+      "name": "Stuart Farnaby",
+      "email": "stuart@bigbearstudios.co.uk"
+    }
+  ],
   "dependencies": {
-    "com.bigbearstudios.bbunity-core": "1.0.0",
-    "com.bigbearstudios.bbunity-test-support": "1.1.0"
+    "com.bigbearstudios.bbunity-core": "1.4.0",
+    "com.bigbearstudios.bbunity-test-support": "1.2.0"
   }
 }
