@@ -38,7 +38,7 @@ namespace BBUnity {
         }
 
         public void StartSpawning() {
-            Activate();
+            ActivateGameObject();
 
             foreach (TimedPoolDefinition poolDefinition in _poolDefinitions) {
                 poolDefinition.Activate();
@@ -46,7 +46,7 @@ namespace BBUnity {
         }
 
         public void StartSpawning(string definitionName) {
-            Activate();
+            ActivateGameObject();
             TimedPoolDefinition poolDefinition = FindPoolDefinition<TimedPoolDefinition>(definitionName);
             if(poolDefinition != null) {
                 poolDefinition.Activate();
@@ -54,7 +54,7 @@ namespace BBUnity {
         }
 
         public void StopSpawning() {
-            Deactivate();
+            DeactivateGameObject();
             
             foreach (TimedPoolDefinition poolDefinition in _poolDefinitions) {
                 poolDefinition.Deactivate();

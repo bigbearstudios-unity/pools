@@ -17,7 +17,7 @@ namespace BBUnity {
         public PoolBehaviour Spawn(string definitionName, Vector3 position) {
             PoolBehaviour poolBehaviour = _Spawn();
             if(poolBehaviour != null) {
-                poolBehaviour.SetPosition(position);
+                poolBehaviour.transform.position = position;
                 poolBehaviour._OnSpawn();
             }
 
@@ -27,8 +27,8 @@ namespace BBUnity {
         public PoolBehaviour Spawn(string definitionName, Vector3 position, Vector3 scale) {
             PoolBehaviour poolBehaviour = _Spawn();
             if(poolBehaviour != null) {
-                poolBehaviour.SetPosition(position);
-                poolBehaviour.SetLocalScale(scale);
+                poolBehaviour.transform.position = position;
+                poolBehaviour.transform.localScale = scale;
                 poolBehaviour._OnSpawn();
             }
 
@@ -49,8 +49,8 @@ namespace BBUnity {
             PoolBehaviour poolBehaviour = _Spawn();
             if(poolBehaviour != null) {
                 poolBehaviour.SetParent(parent);
-                poolBehaviour.SetPosition(position);
-                poolBehaviour.SetLocalScale(scale);
+                poolBehaviour.transform.position = position;
+                poolBehaviour.transform.localScale = scale;
                 poolBehaviour._OnSpawn();
             }
 

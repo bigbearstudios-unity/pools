@@ -42,7 +42,7 @@ namespace BBUnity {
         /// Called internally upon creation.
         /// </summary>
         internal void _OnCreate(BasePoolDefinition poolDefinition) {
-            SetActive(false);
+            DeactivateGameObject();
             SetAvalible(true);
             SetPoolDefinition(poolDefinition);
 
@@ -55,7 +55,7 @@ namespace BBUnity {
         /// Called internally upon Spawn
         /// </summary>
         internal void _OnSpawn() {
-            SetActive(true);
+            ActivateGameObject();
             SetAvalible(false);
 
             CallOnSpawnCallbacks();
@@ -70,7 +70,7 @@ namespace BBUnity {
 
         public void Recycle() {
             SetAvalible(true);
-            SetActive(false);
+            DeactivateGameObject();
         }
 
         private void CallOnCreateCallbacks() {
