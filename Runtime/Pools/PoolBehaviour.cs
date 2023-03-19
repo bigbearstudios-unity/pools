@@ -2,9 +2,12 @@
 using BBUnity;
 using BBUnity.Pools.Internal;
 
-namespace BBUnity {
+namespace BBUnity.Pools {
 
-    public class PoolBehaviour : BaseBehaviour {
+    /// <summary>
+    /// 
+    /// </summary>
+    public class PoolBehaviour : BBMonoBehaviour {
 
         public delegate void OnCreateEventHandler(PoolBehaviour poolBehaviour);
         public delegate void OnSpawnEventHandler(PoolBehaviour poolBehaviour);

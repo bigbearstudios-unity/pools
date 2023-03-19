@@ -35,3 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Custom editor functionality. No longer required on all newer versions of Unity.
+
+## [3.0.0] - 2023-03-19
+
+### Changed
+
+- Moved all non namespaced classes into the BBUnity.Pools namespace

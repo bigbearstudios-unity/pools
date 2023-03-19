@@ -161,7 +161,7 @@ namespace BBUnity.Pools.Internal {
         internal PoolBehaviour GetOrCreateInstance() {
             if(_useDisabledInstances) {
                 foreach(PoolBehaviour instance in _instances) {
-                    if(instance.GameObjectInactive || instance.Avalible) {
+                    if(instance.IsGameObjectInactive || instance.Avalible) {
                         return instance;
                     }
                 }

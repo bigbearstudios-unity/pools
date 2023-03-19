@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 namespace BBUnity.Pools.Internal {
-    public abstract class BasePool : BaseBehaviour {
+    public abstract class BasePool : BBMonoBehaviour {
 
         protected Dictionary<string, int> _poolLookups = new Dictionary<string, int>();
         protected abstract IReadOnlyList<BasePoolDefinition> Definitions{ get; }

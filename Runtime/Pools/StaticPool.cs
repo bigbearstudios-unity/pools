@@ -2,8 +2,11 @@
 using BBUnity.Pools.Internal;
 using System.Collections.Generic;
 
-namespace BBUnity {
+namespace BBUnity.Pools {
 
+    /// <summary>
+    /// 
+    /// </summary>
     [AddComponentMenu("BBUnity/Pools/Static Pool")]
     public class StaticPool : BasePool {
 

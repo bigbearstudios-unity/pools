@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-using BBUnity;
+using BBUnity.Pools;
 using BBUnity.Pools.Internal;
 using BBUnity.TestSupport;
 

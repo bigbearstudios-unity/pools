@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using BBUnity.Pools.Internal;
 
-namespace BBUnity {
+namespace BBUnity.Pools {
 
+    /// <summary>
+    /// 
+    /// </summary>
     [System.Serializable]
     public class TimedPoolDefinition : BasePoolDefinition {
 

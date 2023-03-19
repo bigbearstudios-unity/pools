@@ -1,8 +1,8 @@
-namespace BBUnity {
+namespace BBUnity.Pools {
 
-    /*
-     * Allows you to intercept the OnSpawn / OnCreate events via an interface
-     */
+    /// <summary>
+    /// 
+    /// </summary>
     public interface IPoolBehaviour {
         void OnCreate(PoolBehaviour behaviour);
         void OnSpawn(PoolBehaviour behaviour);
