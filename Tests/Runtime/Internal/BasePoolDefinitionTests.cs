@@ -10,22 +10,6 @@ namespace Internal {
     public class BasePoolDefinitionTests {
 
         [Test]
-        public void Valid_ShouldBeValid_WithAPrefab() {
-            TestUtilities.CreateThenDestroyGameObject((GameObject obj) => {
-                BasePoolDefinition pool = new BasePoolDefinition(obj);
-                Assert.True(pool.HasPrefab);
-            });
-        }
-
-        [Test]
-        public void NumberOfInstances_ShouldReturnDefaultInstances() {
-            TestUtilities.CreateThenDestroyGameObject((GameObject obj) => {
-                BasePoolDefinition pool = new BasePoolDefinition(obj, 5);
-                Assert.AreEqual(5, pool.NumberOfInstances);
-            });
-        }
-
-        [Test]
         public void AllowGrowth_ShouldReturnFalse_WhenMaximumIsSetToZero() {
             TestUtilities.CreateThenDestroyGameObject((GameObject obj) => {
                 BasePoolDefinition pool = new BasePoolDefinition(obj, 0, 1);

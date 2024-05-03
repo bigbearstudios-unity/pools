@@ -60,7 +60,7 @@ namespace BBUnity.Pools.Internal {
         /// Returns a pool of a given name. The easiest way to find a pool without 
         /// mapping it directly in the inspector
         /// </summary>
-        public static T Find<T>(string name) where T : BasePool {
+        public static T FindInScene<T>(string name) where T : BasePool {
             foreach(T pool in FindObjectsOfType<T>()) {
                 if(string.Equals(pool.name, name)) {
                     return pool;

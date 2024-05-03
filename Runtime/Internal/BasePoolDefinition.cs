@@ -8,17 +8,6 @@ namespace BBUnity.Pools.Internal {
 
         public delegate void OnSpawnEventHandler(PoolBehaviour poolBehaviour);
 
-        /// <summary>
-        /// The default maximum size of the pool definition
-        /// </summary>
-        public const int DefaultMaximumSize = 500;
-
-        /// <summary>
-        /// The default starting size of the pool definition,
-        /// E.g. How many of the PoolBehaviours are spawned upon Awake
-        /// </summary>
-        public const int DefaultStartingSize = 0;
-
         [SerializeField, Tooltip("The name of the Definition. This is used to access the definition, defaults to the prefab name")]
         private string _name = null;
 
@@ -26,17 +15,26 @@ namespace BBUnity.Pools.Internal {
         private GameObject _prefab = null;
 
         [SerializeField, Tooltip("The starting size of the pool. This will be filled with instanciated prefabs")]
-        private int _startingSize = DefaultStartingSize;
+        private int _startingSize = 0;
 
-        [SerializeField, Tooltip("The maximum size of the pool.`")]
-        private int _maximumSize = DefaultMaximumSize;
+        [SerializeField, Tooltip("The maximum size of the pool.")]
+        private int _maximumSize = 10;
 
-        [Tooltip("Should we use disabled instances as well as 'avalible' instances")]
-        [SerializeField]
-        private bool _useDisabledInstances = true;
+        [SerializeField, Tooltip("Set transform to parent")]
+        private bool _spawnOnParent = true;
+
+        [SerializeField, Tooltip("The parent of the spawned PoolBehaviour. Default: null, will spawn at the scene root")]
+        private Transform _defaultParent = null;
+
+        [SerializeField, Tooltip("The spawn point of the spawn PoolBehaviour. Default: null, will spawn at the centre of its parent")]
+        private Transform _spawnPoint = null;
+
+        // TODO We should probably allow this functionality in another way?
+        // [Tooltip("Should we use disabled instances as well as 'avalible' instances")]
+        // [SerializeField]
+        // private bool _useDisabledInstances = true;
 
         private List<PoolBehaviour> _instances = null;
-        private Transform _defaultParent = null;
         public event OnSpawnEventHandler OnSpawnEvent;
 
         public string Name {
@@ -92,30 +90,6 @@ namespace BBUnity.Pools.Internal {
             get { return !Valid; }
         }
 
-        public BasePoolDefinition() { }
-
-        public BasePoolDefinition(GameObject prefab) {
-            SetPrefab(prefab);
-        }
-
-        public BasePoolDefinition(string name, GameObject prefab) {
-            SetName(name);
-            SetPrefab(prefab);
-        }
-
-        public BasePoolDefinition(GameObject prefab, int startingSize) {
-            SetPrefab(prefab);
-            SetStartingSize(startingSize);
-            RefreshInstances();
-        }
-
-        public BasePoolDefinition(string name, GameObject prefab, int startingSize) {
-            SetName(name);
-            SetPrefab(prefab);
-            SetStartingSize(startingSize);
-            RefreshInstances();
-        }
-
         public BasePoolDefinition(GameObject prefab, int startingSize, int maximumSize) {
             SetPrefab(prefab);
             SetStartingSize(startingSize);
@@ -151,7 +125,20 @@ namespace BBUnity.Pools.Internal {
             _maximumSize = size;
         }
 
+        private PoolBehaviour CreateInstance() {
+            PoolBehaviour poolBehaviour = Utilities.InstantiateWithComponent<PoolBehaviour>(_prefab, _defaultParent, true);
+
+            poolBehaviour._OnCreate(this);
+
+            _instances.Add(poolBehaviour);
+
+            return poolBehaviour;
+        }
+
         public void RefreshInstances() {
+            // TODO We probably need to handle the fact that the starting
+            // shouldn't be smaller than the maximum
+
             _instances = new List<PoolBehaviour>(_startingSize);
             while(_instances.Count < _startingSize) {
                 CreateInstance();
@@ -159,17 +146,9 @@ namespace BBUnity.Pools.Internal {
         }
 
         internal PoolBehaviour GetOrCreateInstance() {
-            if(_useDisabledInstances) {
-                foreach(PoolBehaviour instance in _instances) {
-                    if(instance.IsGameObjectInactive || instance.Avalible) {
-                        return instance;
-                    }
-                }
-            } else {
-                foreach(PoolBehaviour instance in _instances) {
-                    if(instance.Avalible) {
-                        return instance;
-                    }
+            foreach(PoolBehaviour instance in _instances) {
+                if(instance.IsGameObjectInactive || instance.Avalible) {
+                    return instance;
                 }
             }
             
@@ -178,18 +157,6 @@ namespace BBUnity.Pools.Internal {
             }
 
             return null;
-        }
-
-        private PoolBehaviour InstantiateInstance() {
-            PoolBehaviour poolBehaviour = Utilities.InstantiateWithComponent<PoolBehaviour>(_prefab, _defaultParent, true);
-            poolBehaviour._OnCreate(this);
-            return poolBehaviour;
-        }
-
-        private PoolBehaviour CreateInstance() {
-            return Utilities.Tap(InstantiateInstance(), (PoolBehaviour instance) => {
-                _instances.Add(instance);
-            });
         }
 
         internal void _InvokeOnSpawnEvent(PoolBehaviour poolBehaviour) {
@@ -215,6 +182,12 @@ namespace BBUnity.Pools.Internal {
         public PoolBehaviour Spawn() {
             PoolBehaviour poolBehaviour = GetOrCreateInstance();
             if(poolBehaviour != null) {
+
+                // TODO Tidy this up
+                if(_spawnPoint != null) { 
+                    poolBehaviour.transform.position = _spawnPoint.position;
+                }
+
                 poolBehaviour._OnSpawn();
             }
 

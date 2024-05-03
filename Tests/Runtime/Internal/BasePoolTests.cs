@@ -12,7 +12,7 @@ namespace Internal {
             TestUtilities.CreateThenDestroyGameObject((StaticPool pool) => {
                 pool.name = "Test Pool";
             
-                BasePool foundPool = BasePool.Find<StaticPool>("Test Pool");
+                BasePool foundPool = BasePool.FindInScene<StaticPool>("Test Pool");
                 Assert.NotNull(foundPool);
             });
         }

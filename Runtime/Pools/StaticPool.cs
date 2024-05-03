@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace BBUnity.Pools {
 
     /// <summary>
-    /// 
+    /// A simple static pool which can contain multiple spawnable definitions
     /// </summary>
     [AddComponentMenu("BBUnity/Pools/Static Pool")]
     public class StaticPool : BasePool {
@@ -125,22 +125,6 @@ namespace BBUnity.Pools {
 
         private void AddInternalPoolDefinition(StaticPoolDefinition poolDefinition) {
             _poolDefinitions.Add(poolDefinition);
-        }
-
-        /// <summary>
-        /// Returns a pool of a given name. The easiest way to find a pool without 
-        /// mapping it directly in the inspector
-        /// </summary>
-        public static StaticPool Find(string name) {
-            foreach(StaticPool pool in FindObjectsOfType<StaticPool>()) {
-                if(string.Equals(pool.name, name)) {
-                    return pool;
-                }
-            }
-
-            Debug.LogError($"Pool.Find - Error finding pool: { name }");
-
-            return null;
         }
     }
 }

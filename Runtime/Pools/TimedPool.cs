@@ -40,36 +40,28 @@ namespace BBUnity.Pools {
             }
         }
 
-        public void StartSpawning() {
-            ActivateGameObject();
+        // public void StartSpawning() {
+        //     ActivateGameObject();
+        // }
 
-            foreach (TimedPoolDefinition poolDefinition in _poolDefinitions) {
-                poolDefinition.Activate();
-            }
-        }
+        // public void StartSpawning(string definitionName) {
+        //     ActivateGameObject();
+        // }
 
-        public void StartSpawning(string definitionName) {
-            ActivateGameObject();
-            TimedPoolDefinition poolDefinition = FindPoolDefinition<TimedPoolDefinition>(definitionName);
-            if(poolDefinition != null) {
-                poolDefinition.Activate();
-            }
-        }
-
-        public void StopSpawning() {
-            DeactivateGameObject();
+        // public void StopSpawning() {
+        //     DeactivateGameObject();
             
-            foreach (TimedPoolDefinition poolDefinition in _poolDefinitions) {
-                poolDefinition.Deactivate();
-            }
-        }
+        //     // foreach (TimedPoolDefinition poolDefinition in _poolDefinitions) {
+        //     //     poolDefinition.Deactivate();
+        //     // }
+        // }
 
-        public void StopSpawning(string definitionName) {
-            TimedPoolDefinition poolDefinition = FindPoolDefinition<TimedPoolDefinition>(definitionName);
-            if(poolDefinition != null) {
-                poolDefinition.Deactivate();
-            }
-        }
+        // public void StopSpawning(string definitionName) {
+        //     TimedPoolDefinition poolDefinition = FindPoolDefinition<TimedPoolDefinition>(definitionName);
+        //     if(poolDefinition != null) {
+        //         poolDefinition.Deactivate();
+        //     }
+        // }
 
         public void AddPoolDefinition(TimedPoolDefinition poolDefinition) {
             if(!poolDefinition.Valid) {
