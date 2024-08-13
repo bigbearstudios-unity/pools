@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using BBUnity;
-using BBUnity.Pools.Internal;
 
 namespace BBUnity.Pools {
 
@@ -12,68 +10,33 @@ namespace BBUnity.Pools {
         public delegate void OnCreateEventHandler(PoolBehaviour poolBehaviour);
         public delegate void OnSpawnEventHandler(PoolBehaviour poolBehaviour);
 
-        private bool _avalible = true;
-        private BasePoolDefinition _poolDefinition = null;
+        private ObjectPoolReference _poolReference = null;
 
         public event OnCreateEventHandler OnCreateEvent;
         public event OnSpawnEventHandler OnSpawnEvent;
 
-        public bool Avalible { get { return _avalible; } }
-
-        private void SetAvalible(bool avalible) {
-            _avalible = avalible;
-        }
-
-        private void SetPoolDefinition(BasePoolDefinition poolDefinition) {
-            _poolDefinition = poolDefinition;
-        }
-
         /// <summary>
-        /// Iterates through all of the attached components to find IPoolBehaviour,
-        /// foreach one found assigns an onCreateEvent, onSpawnEvent
+        /// Called internally upon creation.
         /// </summary>
-        private void AssignCallbackInterfaceEvents() {
+        internal void _OnCreate(ObjectPoolReference poolReference) {
+            _poolReference = poolReference;
+
             IPoolBehaviour[] callbacks = GetComponents<IPoolBehaviour>();
             foreach(IPoolBehaviour behaviour in callbacks) {
                 OnCreateEvent += behaviour.OnCreate;
                 OnSpawnEvent += behaviour.OnSpawn;
             }
-            
-        }
 
-        /// <summary>
-        /// Called internally upon creation.
-        /// </summary>
-        internal void _OnCreate(BasePoolDefinition poolDefinition) {
-            DeactivateGameObject();
-            SetAvalible(true);
-            SetPoolDefinition(poolDefinition);
-
-            AssignCallbackInterfaceEvents();
-
+            Deactivate();
             CallOnCreateCallbacks();
         }
 
         /// <summary>
         /// Called internally upon Spawn
         /// </summary>
-        internal void _OnSpawn() {
-            ActivateGameObject();
-            SetAvalible(false);
-
+        internal void OnSpawnInternal() {
+            Activate();
             CallOnSpawnCallbacks();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void Destroy() {
-            Recycle();
-        }
-
-        public void Recycle() {
-            SetAvalible(true);
-            DeactivateGameObject();
         }
 
         private void CallOnCreateCallbacks() {
@@ -90,7 +53,7 @@ namespace BBUnity.Pools {
         private void CallOnSpawnCallbacks() {
             OnSpawn();
             OnSpawnEvent?.Invoke(this);
-            _poolDefinition._InvokeOnSpawnEvent(this);
+            _poolReference._InvokeOnSpawnEvent(this);
         }
 
         /// <summary>
