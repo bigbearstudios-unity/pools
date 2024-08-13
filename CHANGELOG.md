@@ -41,3 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Moved all non namespaced classes into the BBUnity.Pools namespace
+- Removed all 'named pools'
+- Renamed Pool to ObjectPool
+- Updated to BBUnity Core 4.0.0
