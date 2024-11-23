@@ -23,8 +23,5 @@
   "dependencies": {
     "com.bigbearstudios.bbunity-core": "5.1.1",
     "com.bigbearstudios.bbunity-test-support": "2.1.1"
-  },
-  "scripts": {
-    "publish": ""
   }
 }
