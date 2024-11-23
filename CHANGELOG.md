@@ -44,3 +44,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed all 'named pools'
 - Renamed Pool to ObjectPool
 - Updated to BBUnity Core 4.0.0
+
+## [3.0.1] - 2024-11-22
+
+# Changed
+
+- Updated to use BBUnity Core 5.1.1
+    - Changed to use Utilities.Create from BBUnity

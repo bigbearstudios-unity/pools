@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+using BBUnity;
+
 namespace BBUnity.Pools {
 
     /// <summary>
@@ -97,7 +99,7 @@ namespace BBUnity.Pools {
         }
 
         private PoolBehaviour CreateInstance() {
-            PoolBehaviour poolBehaviour = Create.InstantiatedGameObjectWithComponent<PoolBehaviour>(_prefab);
+            PoolBehaviour poolBehaviour = Utilities.Create.InstantiatedGameObjectWithComponent<PoolBehaviour>(_prefab);
 
             poolBehaviour._OnCreate(this);
 
