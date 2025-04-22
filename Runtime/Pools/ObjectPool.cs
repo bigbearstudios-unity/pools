@@ -41,22 +41,26 @@ namespace BBUnity.Pools {
             _poolReferenceLookups.Add(poolDefinition.Name, _poolReferenceLookups.Count);
         }
 
-        public ObjectPoolReference FindPoolDefinition(string definitionName) {
+        public ObjectPoolReference FindPoolReference(string definitionName, bool raiseError = false) {
             if(!_poolReferenceLookups.TryGetValue(definitionName, out int poolId)) {
-                throw new Exception($"No Pool Definition found for: {definitionName}");
+                if(raiseError) {
+                    throw new Exception($"No Pool Definition found for: {definitionName}");
+                }
+
+                return null;
             }
 
             return _poolReferences[poolId];
         }
 
         public PoolBehaviour Spawn(string definitionName) {
-            ObjectPoolReference poolDefinition = FindPoolDefinition(definitionName);
+            ObjectPoolReference poolDefinition = FindPoolReference(definitionName);
             return poolDefinition.Spawn();
         }
 
-        public void AddPoolDefinition(ObjectPoolReference poolReference) {
+        public void AddPoolReference(ObjectPoolReference poolReference) {
             if(poolReference.Invalid) {
-                Debug.LogError("Pool.AddPoolDefinition - An invalid definition was passed");
+                throw new Exception("Pool.AddPoolDefinition - An invalid definition was passed");
             }
 
             _poolReferences.Add(poolReference);
@@ -64,13 +68,11 @@ namespace BBUnity.Pools {
         }
 
         public static ObjectPool FindInScene(string name) {
-            foreach(ObjectPool pool in FindObjectsOfType<ObjectPool>()) {
+            foreach(ObjectPool pool in FindObjectsByType<ObjectPool>(FindObjectsInactive.Include, FindObjectsSortMode.None)) {
                 if(string.Equals(pool.name, name)) { return pool; }
             }
 
-            Debug.LogError($"Pool.Find - Error finding pool: { name }");
-
-            return null;
+            throw new Exception($"No ObjectPool was found with the name, { name }");
         }
     }
 }

@@ -67,19 +67,18 @@ namespace BBUnity.Pools {
             get { return !Valid; }
         }
 
-        public ObjectPoolReference(GameObject prefab, int startingSize, int maximumSize) {
+        public ObjectPoolReference(GameObject prefab, int startingSize = 1, int maximumSize = 50) {
+            SetName(prefab.name);
             SetPrefab(prefab);
             SetStartingSize(startingSize);
             SetMaximumSize(maximumSize);
-            RefreshInstances();
         }
 
-        public ObjectPoolReference(string name, GameObject prefab, int startingSize, int maximumSize) {
+        public ObjectPoolReference(string name, GameObject prefab, int startingSize = 1, int maximumSize = 50) {
             SetName(name);
             SetPrefab(prefab);
             SetStartingSize(startingSize);
             SetMaximumSize(maximumSize);
-            RefreshInstances();
         }
 
         public void SetName(string name) {
@@ -109,8 +108,10 @@ namespace BBUnity.Pools {
         }
 
         public void RefreshInstances() {
+            if(_instances != null) { return; }
+
             _instances = new List<PoolBehaviour>(_startingSize);
-            while(_instances.Count < _startingSize) {
+            for(int i = 0; i < _startingSize; i++) {
                 CreateInstance();
             }
         }
