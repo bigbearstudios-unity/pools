@@ -5,7 +5,7 @@ namespace BBUnity.Pools {
     /// <summary>
     /// 
     /// </summary>
-    public class PoolBehaviour : BBMonoBehaviour {
+    public class PoolBehaviour : MonoBehaviour {
 
         public delegate void OnCreateEventHandler(PoolBehaviour poolBehaviour);
         public delegate void OnSpawnEventHandler(PoolBehaviour poolBehaviour);
@@ -27,7 +27,7 @@ namespace BBUnity.Pools {
                 OnSpawnEvent += behaviour.OnSpawn;
             }
 
-            Deactivate();
+            gameObject.SetActive(false);
             CallOnCreateCallbacks();
         }
 
@@ -35,7 +35,7 @@ namespace BBUnity.Pools {
         /// Called internally upon Spawn
         /// </summary>
         internal void OnSpawnInternal() {
-            Activate();
+            gameObject.SetActive(true);
             CallOnSpawnCallbacks();
         }
 

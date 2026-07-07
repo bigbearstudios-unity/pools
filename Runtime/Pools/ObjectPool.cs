@@ -9,7 +9,7 @@ namespace BBUnity.Pools {
     /// A simple static pool which can contain multiple spawnable definitions
     /// </summary>
     [AddComponentMenu("BBUnity/Pools/Object Pool")]
-    public class ObjectPool : BBMonoBehaviour {
+    public class ObjectPool : MonoBehaviour {
 
         [Tooltip("The definitions for this pool")]
         [SerializeField]

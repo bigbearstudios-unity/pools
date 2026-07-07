@@ -118,7 +118,7 @@ namespace BBUnity.Pools {
 
         internal PoolBehaviour GetOrCreateInstance() {
             foreach(PoolBehaviour instance in _instances) {
-                if(!instance.Active) { return instance; }
+                if(!instance.gameObject.activeSelf) { return instance; }
             }
             
             if(AllowGrowth) {
