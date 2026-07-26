@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 using BBUnity;
@@ -6,7 +6,7 @@ using BBUnity;
 namespace BBUnity.Pools {
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     [System.Serializable]
     public class ObjectPoolReference {
@@ -28,7 +28,7 @@ namespace BBUnity.Pools {
         public event OnSpawnEventHandler OnSpawnEvent;
 
         public string Name {
-            get { return (_name != null && _name.Length > 0) ? _name : _prefab.name; }
+            get { return (_name != null && _name.Length > 0) ? _name : _prefab?.name ?? "(unnamed, no prefab)"; }
             set { _name = value; }
         }
 
@@ -48,7 +48,7 @@ namespace BBUnity.Pools {
 
         public int MaximumSize {
             get { return _maximumSize; }
-            set { _maximumSize = value; }
+            set { SetMaximumSize(value); }
         }
 
         public bool AllowGrowth {
@@ -57,6 +57,37 @@ namespace BBUnity.Pools {
 
         public int NumberOfInstances {
             get { return _instances != null ? _instances.Count : 0; }
+        }
+
+        /// <summary>
+        /// The number of instances currently spawned (active) out of this pool.
+        /// </summary>
+        public int ActiveCount {
+            get {
+                if (_instances == null) { return 0; }
+
+                int count = 0;
+                foreach (PoolBehaviour instance in _instances) {
+                    if (instance != null && instance.gameObject.activeSelf) { count++; }
+                }
+
+                return count;
+            }
+        }
+
+        /// <summary>
+        /// The number of instances currently available to be spawned.
+        /// </summary>
+        public int InactiveCount {
+            get { return NumberOfInstances - ActiveCount; }
+        }
+
+        /// <summary>
+        /// True once this pool has created more instances than its configured StartingSize.
+        /// Useful for spotting an undersized StartingSize during development.
+        /// </summary>
+        public bool HasGrownBeyondStartingSize {
+            get { return NumberOfInstances > _startingSize; }
         }
 
         public bool Valid {
@@ -94,6 +125,10 @@ namespace BBUnity.Pools {
         }
 
         public void SetMaximumSize(int size) {
+            if (size <= 0) {
+                Debug.LogWarning($"ObjectPoolReference '{Name}': MaximumSize set to {size}, which will prevent this pool from ever growing.");
+            }
+
             _maximumSize = size;
         }
 
@@ -107,7 +142,12 @@ namespace BBUnity.Pools {
             return poolBehaviour;
         }
 
-        public void RefreshInstances() {
+        /// <summary>
+        /// Performs first-time initialisation, filling the pool up to StartingSize. This is a
+        /// one-time setup step, not a reset — calling it again after the pool has already been
+        /// initialised is a no-op. See ClearAll() to return active instances to the pool.
+        /// </summary>
+        public void InitialiseInstances() {
             if(_instances != null) { return; }
 
             _instances = new List<PoolBehaviour>(_startingSize);
@@ -120,12 +160,20 @@ namespace BBUnity.Pools {
             foreach(PoolBehaviour instance in _instances) {
                 if(!instance.gameObject.activeSelf) { return instance; }
             }
-            
+
             if(AllowGrowth) {
                 return CreateInstance();
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Removes an instance from this pool's tracking, e.g. because it was destroyed rather
+        /// than returned. Called internally by PoolBehaviour.OnDestroy().
+        /// </summary>
+        internal void RemoveInstance(PoolBehaviour instance) {
+            _instances?.Remove(instance);
         }
 
         internal void _InvokeOnSpawnEvent(PoolBehaviour poolBehaviour) {
@@ -136,10 +184,11 @@ namespace BBUnity.Pools {
          * Public Spawn Methods
          */
 
-        /*
-         * Spawns the PoolBehaviour, will call the underlying OnSpawnEvent if set and also
-         * poolBehaviour.OnSpawn
-         */
+        /// <summary>
+        /// Spawns the PoolBehaviour, will call the underlying OnSpawnEvent if set and also
+        /// poolBehaviour.OnSpawn. Returns null if the pool is already at MaximumSize and no
+        /// inactive instance is available to reuse — callers must null-check the result.
+        /// </summary>
         public PoolBehaviour Spawn() {
             PoolBehaviour poolBehaviour = GetOrCreateInstance();
             if(poolBehaviour != null) {
@@ -147,6 +196,27 @@ namespace BBUnity.Pools {
             }
 
             return poolBehaviour;
+        }
+
+        /// <summary>
+        /// Returns every currently-active instance in this pool back to it, ready to be
+        /// respawned. Useful at scene transitions or level resets.
+        /// </summary>
+        public void ClearAll() {
+            if (_instances == null) { return; }
+
+            // Copy first: ReturnToPool() deactivates the GameObject, which must not happen
+            // while we're mid-iteration over the same backing list.
+            List<PoolBehaviour> toReturn = new List<PoolBehaviour>();
+            foreach (PoolBehaviour instance in _instances) {
+                if (instance != null && instance.gameObject.activeSelf) {
+                    toReturn.Add(instance);
+                }
+            }
+
+            foreach (PoolBehaviour instance in toReturn) {
+                instance.ReturnToPool();
+            }
         }
     }
 }
